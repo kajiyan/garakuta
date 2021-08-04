@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "devcert": "^1.2.0"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
