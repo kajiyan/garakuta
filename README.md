@@ -7,3 +7,7 @@ Windows で devcert を使用するのに PC へ以下から OpenSSL をイン�
 
 - [OpenSSLをWindows10にインストールする](https://blog.katsubemakito.net/articles/install-openssl-windows10)
 - [Win32/Win64 OpenSSL Installer for Windows - Shining Light Productions](https://slproweb.com/products/Win32OpenSSL.html)
+
+## リロードについて
+`src` ディレクトリ以下の js ファイルは HMR されます。  
+その他のファイル、サーバー側のプログラムが更新されたときもブラウザが更新されます。

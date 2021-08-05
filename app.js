@@ -3,19 +3,34 @@ const path = require('path');
 
 const devcert = require('devcert');
 const express = require('express');
+const connectLiveReload = require('connect-livereload');
+const livereload = require('livereload');
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 
+const config = require('./webpack.config.js');
+
 const PORT = 3000;
 
 const app = express();
-const config = require('./webpack.config.js');
 const compiler = webpack(config);
+const liveReloadServer = livereload.createServer();
+
+liveReloadServer.server.once('connection', () => {
+  setTimeout(() => {
+    liveReloadServer.refresh('/');
+  }, 100);
+});
 
 // テンプレートエンジンに ejs を使用する
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+app.use(connectLiveReload({
+  ignore: [/\.js(\?.*)?$/],
+  src: 'http://localhost:35729/livereload.js?snipver=1',
+}));
 
 // express に webpack-dev-middleware を組み込む
 // webpack.config.js の設定内容で使用する
@@ -39,7 +54,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
   app.get('/', (req, res) => {
     // views/home.ejs を表示する
-    res.render('home');
+    res.render('home', {
+      title: 'Express',
+    });
   });
 
   // https://（暗号化）での接続を待ち受けるサーバーを起動する
