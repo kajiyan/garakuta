@@ -3,6 +3,7 @@
     "connect-livereload": "^0.6.1",
     "cross-env": "^7.0.3",
     "devcert": "^1.2.0",
+    "dotenv": "^10.0.0",
     "ejs": "^3.1.6",
     "livereload": "^0.9.3",
     "pm2": "^5.1.0",

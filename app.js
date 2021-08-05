@@ -2,6 +2,7 @@ const https = require('https');
 const path = require('path');
 
 const devcert = require('devcert');
+const dotenv = require('dotenv');
 const express = require('express');
 const connectLiveReload = require('connect-livereload');
 const livereload = require('livereload');
@@ -11,11 +12,12 @@ const webpackHotMiddleware = require('webpack-hot-middleware');
 
 const config = require('./webpack.config.js');
 
-const PORT = 3000;
-
 const app = express();
 const compiler = webpack(config);
 const liveReloadServer = livereload.createServer();
+
+// 設定ファイル .env の内容を process.env へ展開する
+dotenv.config();
 
 liveReloadServer.server.once('connection', () => {
   setTimeout(() => {
@@ -49,7 +51,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 (async () => {
   // https:// でサーバーを起動するために必要な証明書を生成する
-  const { key, cert } = await devcert.certificateFor('localhost');
+  const { key, cert } = await devcert.certificateFor(process.env.HOST);
   const server = https.createServer({ key, cert }, app);
 
   app.get('/', (req, res) => {
@@ -60,7 +62,7 @@ app.use(express.static(path.join(__dirname, 'public')));
   });
 
   // https://（暗号化）での接続を待ち受けるサーバーを起動する
-  server.listen(PORT, () => {
-    console.log(`App listening at https://localhost:${PORT}/`);
+  server.listen(process.env.PORT, () => {
+    console.log(`App listening at https://${process.env.HOST}:${process.env.PORT}/`);
   });
 })();
