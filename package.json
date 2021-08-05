@@ -5,6 +5,7 @@
     "devcert": "^1.2.0",
     "dotenv": "^10.0.0",
     "ejs": "^3.1.6",
+    "express": "^4.17.1",
     "livereload": "^0.9.3",
     "pm2": "^5.1.0",
     "webpack": "^5.48.0",
@@ -13,7 +14,8 @@
     "webpack-hot-middleware": "^2.25.0"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "load-bmfont": "1.0.0",
+    "three-bmfont-text": "^3.0.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
