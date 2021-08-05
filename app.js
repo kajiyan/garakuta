@@ -13,41 +13,46 @@ const webpackHotMiddleware = require('webpack-hot-middleware');
 const config = require('./webpack.config.js');
 
 const app = express();
-const compiler = webpack(config);
-const liveReloadServer = livereload.createServer();
 
 // 設定ファイル .env の内容を process.env へ展開する
 dotenv.config();
-
-liveReloadServer.server.once('connection', () => {
-  setTimeout(() => {
-    liveReloadServer.refresh('/');
-  }, 100);
-});
 
 // テンプレートエンジンに ejs を使用する
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use(connectLiveReload({
-  ignore: [/\.js(\?.*)?$/],
-  src: 'http://localhost:35729/livereload.js?snipver=1',
-}));
-
-// express に webpack-dev-middleware を組み込む
-// webpack.config.js の設定内容で使用する
-app.use(
-  webpackDevMiddleware(compiler, {
-    publicPath: config.output.publicPath,
-  })
-);
-app.use(webpackHotMiddleware(compiler));
 // リクエストボディの JSON, Content-Type が application/x-www-form-urlencoded をパースできるようにする
 app.use(express.json());
 // ブラウザに変更を通知する、HMR に対応している箇所はリロードせずに更新される
 app.use(express.urlencoded({ extended: false }));
 // public フォルダのファイルを参照できるようにする 
 app.use(express.static(path.join(__dirname, 'public')));
+
+// 開発時のみ以下の if 文の中が有効となる
+if (app.get('env') === 'development') {
+  const compiler = webpack(config);
+  const liveReloadServer = livereload.createServer();
+
+  // js 以外のファイルが上書きされたときにブラウザを更新する設定
+  liveReloadServer.server.once('connection', () => {
+    setTimeout(() => {
+      liveReloadServer.refresh('/');
+    }, 100);
+  });
+
+  app.use(connectLiveReload({
+    src: 'http://localhost:35729/livereload.js?snipver=1',
+  }));
+
+  // express に webpack-dev-middleware を組み込む
+  // webpack.config.js の設定内容で使用する
+  app.use(
+    webpackDevMiddleware(compiler, {
+      publicPath: config.output.publicPath,
+    })
+  );
+  app.use(webpackHotMiddleware(compiler));
+}
 
 (async () => {
   // https:// でサーバーを起動するために必要な証明書を生成する

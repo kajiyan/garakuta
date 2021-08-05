@@ -3,12 +3,19 @@ const path = require('path');
 const webpack = require('webpack');
 
 module.exports = {
-  mode: 'development',
+  mode: process.env.NODE_ENV,
   entry: {
-    home: ['webpack-hot-middleware/client?reload=true&timeout=1000', './src/home.js'],
+    home: [
+      process.env.NODE_ENV === 'development' &&
+        'webpack-hot-middleware/client?reload=true&timeout=1000',
+      './src/home.js',
+    ].filter(Boolean),
   },
   devtool: 'inline-source-map',
-  plugins: [new webpack.HotModuleReplacementPlugin()],
+  plugins: [
+    process.env.NODE_ENV === 'development' &&
+      new webpack.HotModuleReplacementPlugin(),
+  ].filter(Boolean),
   output: {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
