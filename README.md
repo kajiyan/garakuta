@@ -11,3 +11,6 @@ Windows で devcert を使用するのに PC へ以下から OpenSSL をイン�
 ## リロードについて
 `src` ディレクトリ以下の js ファイルは HMR されます。  
 その他のファイル、サーバー側のプログラムが更新されたときはブラウザが更新（リロード）されます。
+
+8th wall engine version 17.0.5.476
+threejs r123

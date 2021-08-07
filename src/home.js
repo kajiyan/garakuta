@@ -1,4 +1,7 @@
-// const createTextGeometry = require('three-bmfont-text');
+import textFragmentShader from './shader/text-fragment-shader.frag';
+import textVertexShader from './shader/text-vertex-shader.vert';
+
+const createTextGeometry = require('three-bmfont-text');
 const loadFont = require('load-bmfont');
 
 /**
@@ -50,13 +53,100 @@ const loadBMFont = (url, image) => new Promise((resolve, reject) => {
   })();
 });
 
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer();
+
+camera.position.z = 200;
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
 (async () => {
   const bmFont = await loadBMFont(
     '/shared/fonts/noto-sans-cjk-jp-sdf-4112.json',
     '/shared/fonts/noto-sans-cjk-jp-sdf-4112.png'
   );
 
-  console.log(bmFont);
+  const textGeometry = createTextGeometry({
+    font: bmFont.font,
+    align: 'center',
+    width: 500,
+    flipY: bmFont.texture.flipY,
+  });
+
+  const material = new THREE.RawShaderMaterial({
+    vertexShader: textVertexShader,
+    fragmentShader: textFragmentShader,
+    uniforms: {
+      animate: {
+        type: 'f',
+        value: 1,
+      },
+      iGlobalTime: {
+        type: 'f',
+        value: 0,
+      },
+      map: {
+        type: 't',
+        value: bmFont.texture,
+      },
+      color: {
+        type: 'c',
+        value: new THREE.Color('#fff'),
+      },
+    },
+    transparent: true,
+    side: THREE.DoubleSide,
+    depthTest: false,
+  });
+
+  const textMesh = new THREE.Mesh(textGeometry, material);
+
+  const textAnchor = new THREE.Object3D();
+  textAnchor.rotation.set(Math.PI, 0, 0);
+  textGeometry.update('こんにちわ世界');
+  textAnchor.add(textMesh);
+  scene.add(textAnchor);
+
+  const lines = textGeometry.visibleGlyphs.map((glyph) => {
+    return glyph.line;
+  });
+
+  const lineCount = lines.reduce((a, b) => {
+    return Math.max(a, b);
+  }, 0);
+
+  const lineData = lines.map((line) => {
+    const t = lineCount <= 1 ? 1 : (line / (lineCount - 1));
+    return [t, t, t, t];
+  }).reduce((a, b) => {
+    return a.concat(b)
+  }, []);
+
+  textGeometry.setAttribute('line', new THREE.BufferAttribute(new Float32Array(lineData), 1));
+  
+  textMesh.position.x = -textGeometry.layout.width / 2;
+  textMesh.position.y = textGeometry.layout.height / 2;
+
+  let progress = 0;
+  const duration = 60;
+
+  const animate = function (timestamp) {
+    requestAnimationFrame(animate);
+
+    const sec = performance.now() / 1000;
+    
+    progress = sec;
+    material.uniforms.iGlobalTime.value = sec;
+    material.uniforms.animate.value = progress / duration;
+    if (progress > duration) {
+      progress = 0;
+    }
+
+    renderer.render(scene, camera);
+  };
+
+  animate();
 })();
 
 if (module.hot) {
@@ -66,5 +156,7 @@ if (module.hot) {
     }
   });
 
-  // module.hot.dispose(() => {});
+  module.hot.dispose(() => {
+    renderer.domElement.remove();
+  });
 };
