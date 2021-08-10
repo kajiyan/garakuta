@@ -9,8 +9,11 @@
 </head>
 <body>
   <h1>Hello World <%= title %></h1>
+  <canvas id="camerafeed"></canvas>
   
   <script src="/shared/js/three.min.js"></script>
+  <script src="//cdn.8thwall.com/web/xrextras/xrextras.js"></script>
+  <script async src="//apps.8thwall.com/xrweb?appKey=<%= EIGHTH_WALL_APP_KEY %>"></script>
   <script src="home.bundle.js"></script>
 </body>
 </html>

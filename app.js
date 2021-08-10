@@ -1,4 +1,5 @@
 const https = require('https');
+const os = require('os');
 const path = require('path');
 
 const devcert = require('devcert');
@@ -13,6 +14,9 @@ const webpackHotMiddleware = require('webpack-hot-middleware');
 const config = require('./webpack.config.js');
 
 const app = express();
+const IPv4 = Object.values(os.networkInterfaces())
+  .flat()
+  .find((i) => i.family == 'IPv4' && !i.internal).address;
 
 // 設定ファイル .env の内容を process.env へ展開する
 dotenv.config();
@@ -55,19 +59,26 @@ if (app.get('env') === 'development') {
 }
 
 (async () => {
+  const { HOST, PORT, EIGHTH_WALL_APP_KEY } = process.env;
+  // IP Address がサポートされていない別の方法で SSL にするか
   // https:// でサーバーを起動するために必要な証明書を生成する
-  const { key, cert } = await devcert.certificateFor(process.env.HOST);
+  const { key, cert } = await devcert.certificateFor(HOST);
   const server = https.createServer({ key, cert }, app);
 
   app.get('/', (req, res) => {
     // views/home.ejs を表示する
     res.render('home', {
       title: 'Express',
+      EIGHTH_WALL_APP_KEY,
     });
   });
 
   // https://（暗号化）での接続を待ち受けるサーバーを起動する
-  server.listen(process.env.PORT, () => {
-    console.log(`App listening at https://${process.env.HOST}:${process.env.PORT}/`);
+  server.listen(PORT, () => {
+    console.log(`
+App listening at https://${IPv4}:${PORT}/
+IP Address: ${IPv4}
+Port: ${PORT}
+    `);
   });
 })();

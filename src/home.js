@@ -1,3 +1,4 @@
+import singUsPipelineModule from './singUsPipelineModule';
 import textFragmentShader from './shader/text-fragment-shader.frag';
 import textVertexShader from './shader/text-vertex-shader.vert';
 
@@ -53,6 +54,37 @@ const loadBMFont = (url, image) => new Promise((resolve, reject) => {
   })();
 });
 
+/**
+ * onxrloaded 
+ */
+const onxrloaded = () => {
+  XR8.addCameraPipelineModules([
+    // Add camera pipeline modules.
+    XR8.GlTextureRenderer.pipelineModule(), // Draws the camera feed.
+    XR8.Threejs.pipelineModule(), // Creates a ThreeJS AR Scene.
+    XR8.XrController.pipelineModule(), // Enables SLAM tracking.
+    XRExtras.AlmostThere.pipelineModule(), // Detects unsupported browsers and gives hints.
+    XRExtras.FullWindowCanvas.pipelineModule(), // Modifies the canvas to fill the window.
+    XRExtras.Loading.pipelineModule(), // Manages the loading screen on startup.
+    XRExtras.RuntimeError.pipelineModule(), // Shows an error image on runtime error.
+    // Other custom pipeline modules.
+    singUsPipelineModule(),
+  ]);
+
+  // Open the camera and start running the camera run loop.
+  XR8.run({
+    canvas: document.getElementById('camerafeed'),
+  });
+};
+
+// Show loading screen before the full XR library has been loaded.
+const load = () => {
+  // 以下は XRExtras.Loading.showLoading({ onxrloaded: onxrloaded }); を省略した記述
+  // オブジェクトのキー名とバリューの変数名が同じであればこのように記述できる
+  XRExtras.Loading.showLoading({ onxrloaded });
+};
+
+/*
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer();
@@ -60,6 +92,7 @@ const renderer = new THREE.WebGLRenderer();
 camera.position.z = 200;
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
+*/
 
 (async () => {
   const bmFont = await loadBMFont(
@@ -73,7 +106,16 @@ document.body.appendChild(renderer.domElement);
     width: 500,
     flipY: bmFont.texture.flipY,
   });
+  
+  window.onload = () => {
+    if (window.XRExtras) {
+      load();
+    } else {
+      window.addEventListener('xrextrasloaded', load);
+    }
+  };
 
+  /*
   const material = new THREE.RawShaderMaterial({
     vertexShader: textVertexShader,
     fragmentShader: textFragmentShader,
@@ -147,6 +189,7 @@ document.body.appendChild(renderer.domElement);
   };
 
   animate();
+  */
 })();
 
 if (module.hot) {
