@@ -11,7 +11,7 @@ module.exports = {
         NODE_ENV: 'production',
       },
       ignore_watch:['node_modules', 'src'],
-      name: 'garakuta',
+      name: 'SING_US',
       script: './app.js',
       watch: process.env.NODE_ENV === 'development',
     },

@@ -1,4 +1,4 @@
-# garakuta
+# SING US
 SSL（`https://○○○○○○○`）で環境構築するために [devcert](https://www.npmjs.com/package/devcert) （※1）を使用します。  
 Windows で devcert を使用するのに PC へ以下から OpenSSL をインストールして、参照できるようにパスを通します。PowerShell やコマンドプロンプトなどの CLI が起動している場合、アプリケーションを再起動することでパスが反映されます。  
 また、VS Code のターミナルからの使用を想定をしている場合、OpenSSL のパスを VS Code より先頭に設定する必要がありました。  

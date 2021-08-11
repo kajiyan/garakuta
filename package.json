@@ -30,7 +30,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "cross-env NODE_ENV=development pm2 start ecosystem.config.js",
     "logs": "pm2 logs",
-    "end": "pm2 delete garakuta",
+    "end": "pm2 delete SING_US",
     "watch": "webpack --watch",
     "front": "webpack serve --open",
     "build": "webpack"
