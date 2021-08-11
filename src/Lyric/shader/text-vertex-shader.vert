@@ -1,5 +1,5 @@
-attribute vec4 position;
 attribute vec2 uv;
+attribute vec4 position;
 attribute float line;
 uniform mat4 projectionMatrix;
 uniform mat4 modelViewMatrix;

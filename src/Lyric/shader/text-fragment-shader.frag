@@ -18,7 +18,6 @@ float median(float r, float g, float b) {
 
 void main() {
   vec4 texColor = texture2D(map, vUv);
-  // gl_FragColor = vec4(color, texColor.a);
   
   float sdf = texColor.a;
   
