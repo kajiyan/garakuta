@@ -1,4 +1,7 @@
-# SING US
+# SING US(experiments)
+Web AR (8th wall) でビットマップフォントを表示する検証用リポジトリ。  
+![検証画面](https://user-images.githubusercontent.com/3325442/129090576-cb2a93dd-1d2c-448a-9db6-f4c050c67160.png)
+
 SSL（`https://○○○○○○○`）で環境構築するために [devcert](https://www.npmjs.com/package/devcert) （※1）を使用します。  
 Windows で devcert を使用するのに PC へ以下から OpenSSL をインストールして、参照できるようにパスを通します。PowerShell やコマンドプロンプトなどの CLI が起動している場合、アプリケーションを再起動することでパスが反映されます。  
 また、VS Code のターミナルからの使用を想定をしている場合、OpenSSL のパスを VS Code より先頭に設定する必要がありました。  
